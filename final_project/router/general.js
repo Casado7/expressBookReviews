@@ -34,7 +34,14 @@ public_users.post("/register", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get('/', async function (req, res) {
-    res.send(await JSON.stringify(books));
+    try {
+      const responseData = { data: books };
+      
+      res.send(JSON.stringify(responseData.data));
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('An error occurred while fetching the list of books.');
+    }
   });
 
 
@@ -42,28 +49,38 @@ public_users.get('/', async function (req, res) {
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',async function (req, res) {
   //libros filtrados por isbn
-  const isbn = req.params.isbn;
-  return res.send(await books[isbn]);
+  try {
+      const isbn = req.params.isbn;
+      res.send(books[isbn]);
+    } catch (error){
+        console.error(error);
+        res.status(500).send('An error occurred while fetching the list of books.');
+    }
+  
  });
   
 // Get book details based on author
 public_users.get('/author/:author',async function (req, res) {
-  //filtrar por nombre de autor
-  const author = req.params.author;
-  const filteredBooks = await Object.values(books).filter(book => book.author === author);
-  // Return the filtered books
-  return res.send(filteredBooks);
+    try {  
+        const author = req.params.author;
+        const filteredBooks = Object.values(books).filter(book => book.author === author);
+        res.send(filteredBooks);
+    } catch (error){
+        console.error(error);
+        res.status(500).send('An error occurred while fetching the list of books.');
+    }
 });
 
 // Get all books based on title
 public_users.get('/title/:title',async function (req, res) {
-  //filtrar por titulo
-  const title = req.params.title;
-  const filteredBooks = await Object.values(books).filter(book => book.title === title);
-  // Return the filtered books
-  return res.send(filteredBooks);
-
-    
+  try {
+      const title = req.params.title;
+      const filteredBooks = Object.values(books).filter(book => book.title === title);
+      return res.send(filteredBooks);
+    } catch (error){
+        console.error(error);
+        res.status(500).send('An error occurred while fetching the list of books.');
+    }    
 });
 
 //  Get book review
